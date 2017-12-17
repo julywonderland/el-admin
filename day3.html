@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<!-- 引入样式 -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<link rel="stylesheet" href="./cssVue/index.css" >
+<!-- 引入样式 -->
+</head>
+
+<body>
+    <div id="app">
+
+        <el-container>
+            <el-aside width="200px">
+
+                <i class="el-icon-edit"></i> 饿了么后台管理
+                    
+                <el-menu default-active="1"  @open="openMenu" >
+                    <el-submenu index="1">
+
+                        <template slot="title">
+                            <i class="el-icon-location"></i>
+                            <span>文章管理</span>
+                        </template>
+
+                        <el-menu-item-group>
+                            <el-menu-item index="1-1" >分组一</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group>
+                            <el-menu-item index="1-2" >分组二</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group >
+                            <el-menu-item index="1-3">分组三</el-menu-item>
+                        </el-menu-item-group>
+
+                    </el-submenu>
+
+                    <el-menu-item index="2">
+                        <i class="el-icon-menu"></i>
+                        <span slot="title">人员管理</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="3">
+                        <i class="el-icon-setting"></i>
+                        <span slot="title">设置</span>
+                    </el-menu-item>
+
+                </el-menu>
+            </el-aside>
+            <el-container>
+                <el-header>
+                    <el-breadcrumb separator="/" width="90px"> 
+                    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>cnode</el-breadcrumb-item>
+                    <el-breadcrumb-item>文章管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>列表</el-breadcrumb-item>
+                    </el-breadcrumb>
+
+                    <el-dropdown :hide-on-click="false"  >
+                        <span class="el-dropdown-link">
+                            下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item>黄金糕</el-dropdown-item>
+                            <el-dropdown-item>狮子头</el-dropdown-item>
+                            <el-dropdown-item>螺蛳粉</el-dropdown-item>
+                            <el-dropdown-item disabled>双皮奶</el-dropdown-item>
+                            <el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </el-header>
+           <el-main>
+            3
+            </el-main>
+        </el-container>
+        </el-container>
+        
+    </div>
+</body>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el:"#app",
+        data:{
+        
+        },
+        methods:{
+            openMenu:function(t){ //自动获取第一个参数
+                this.$alert(t)
+            }
+        }
+
+    })
+</script>
+</html>
