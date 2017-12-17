@@ -6,12 +6,25 @@
 <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 <link rel="stylesheet" href="./cssVue/index.css" >
 <!-- 引入样式 -->
+<style>
+    [v-cloak]{
+        display: none;
+    }
+
+    .el-table .warning-row {
+      background: oldlace;
+    }
+  
+    .el-table .success-row {
+      background: #f0f9eb;
+    }
+  </style>
 </head>
 
 <body>
     <div id="app">
 
-        <el-container>
+        <el-container v-cloak>
             <el-aside width="200px">
 
                 <i class="el-icon-edit"></i> 饿了么后台管理
@@ -71,7 +84,49 @@
                     </el-dropdown>
                 </el-header>
            <el-main>
-            3
+                <template>
+                    <el-table
+                    :data="tableData"
+                    border
+                    stripe
+                    v-loading="isLoading"
+                    style="width: 100%">
+                    <el-table-column
+                        prop="create_at"
+                        label="日期"
+                        width="180">
+                    </el-table-column>
+                    <el-table-column
+                        prop="title"
+                        label="标题"
+                        width="180">
+                    </el-table-column>
+                    <el-table-column
+                        prop="reply_count"
+                        label="访问量">
+                    </el-table-column>
+                    </el-table>
+                </template>
+
+
+                <div class="block">
+
+                        <!-- @size-change="activePageSize=$event"
+                        @current-change="activePage=$event" -->
+                    <el-pagination
+                        
+                        @size-change="changeSize"
+                        @current-change="changeCurrent"
+
+                        :current-page="activePage"
+                        :page-size="activePageSize"
+
+                        :page-sizes="[5,10,20,40]"
+                        
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="200">
+                    </el-pagination>
+                </div>
             </el-main>
         </el-container>
         </el-container>
@@ -81,18 +136,78 @@
 <!-- 引入组件库 -->
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
     new Vue({
         el:"#app",
-        data:{
-        
+        data:function() {
+            return {
+                isLoading:false,
+                tableData:[],
+                activePage:1,       //当前页
+                activePageSize:10,  //当前页显示多少条
+
+                // tableData: [{
+                //     date: '2016-05-02',
+                //     name: '王小虎',
+                //     address: '上海市普陀区金沙江路 1518 弄'
+                //     }, {
+                //     date: '2016-05-04',
+                //     name: '王小虎',
+                //     address: '上海市普陀区金沙江路 1517 弄'
+                //     }, {
+                //     date: '2016-05-01',
+                //     name: '王小虎',
+                //     address: '上海市普陀区金沙江路 1519 弄'
+                //     }, {
+                //     date: '2016-05-03',
+                //     name: '王小虎',
+                //     address: '上海市普陀区金沙江路 1516 弄'
+                //     }]
+            }
+        },
+        mounted(){
+            this.getList();//初始化加载
         },
         methods:{
             openMenu:function(t){ //自动获取第一个参数
                 this.$alert(t)
+            },
+            getList:function(){
+                this.isLoading = true;
+                axios.get('https://cnodejs.org/api/v1/topics', {
+                    params: {
+                        page: this.activePage,
+                        limit: this.activePageSize
+                    }
+                })
+                .then(function (res) {
+                    this.isLoading = false;
+                    this.tableData = res.data.data;
+                }.bind(this));
+            },
+            
+            changeSize:function(page){      //改变当前显示条数
+                this.activePageSize = page;
+            },
+            changeCurrent:function(size){  //当前页码
+                this.activePage = size;
+            },
+            
+        },
+        
+        watch: {
+            activePage(){
+                this.getList();
+            },
+            activePageSize(){
+                this.getList();
             }
         }
 
-    })
+    });
+
+
 </script>
+
 </html>
