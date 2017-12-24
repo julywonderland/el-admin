@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +25,7 @@
 <body>
     <div id="app">
 
-        <el-container v-cloak>
+        <el-container v-cloak v-loading="isLoading" >
             <el-aside width="200px">
 
                 <i class="el-icon-edit"></i> 饿了么后台管理
@@ -86,40 +87,71 @@
            <el-main>
                 <template>
                     <el-table
-                    :data="tableData"
-                    border
-                    stripe
-                    v-loading="isLoading"
-                    style="width: 100%">
-                    <el-table-column
-                        prop="create_at"
-                        label="日期"
-                        width="180">
-                    </el-table-column>
-                    <el-table-column
-                        prop="title"
-                        label="标题"
-                        width="180">
-                    </el-table-column>
-                    <el-table-column
-                        prop="reply_count"
-                        label="访问量">
-                    </el-table-column>
+                        :data="tableData"
+                        border
+                        stripe
+                        v-loading="isLoading"
+                        style="width: 100%" @sort-change="sortChange">
+
+                        <el-table-column type="selection" width="55px">
+
+                        </el-table-column>
+                        <!-- <el-table-column
+                            prop="create_at"
+                            label="日期"
+                            width="180">
+                        </el-table-column> -->
+
+                        <el-table-column
+                            label="日期"
+                            width="180">
+                            <template slot-scope="scope">
+                                <i class="el-icon-time"></i>
+                                {{scope.row.create_at}}
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                            label="标题"
+                            width="180">
+                            <template slot-scope="scope">
+                                <el-popover placement="top" trigger="hover">
+                                    <h4 style="width: 200px;">{{scope.row.title}}</h4>
+                                    <div slot="reference">
+                                        <span>{{scope.row.title.substr(0,10) + '...'}}</span>
+                                    </div>
+                                </el-popover>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                            prop="reply_count"
+                            label="访问量"
+                            sortable ="custom">
+                        </el-table-column>
+
+                        <el-table-column label="操作" width="200">
+                            <template slot-scope="scope">
+                                <el-button size="mini" type="success" @click="showEditPanel(scope.$index)" >编辑</el-button>
+                                <el-button size="mini" type="danger" @click="del(scope.$index)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    
                     </el-table>
                 </template>
 
-
+                <!-- 分页 -->
                 <div class="block">
 
                         <!-- @size-change="activePageSize=$event"
                         @current-change="activePage=$event" -->
                     <el-pagination
                         
-                        @size-change="changeSize"
-                        @current-change="changeCurrent"
+                        @size-change="changeSize"    改变当前显示条数
+                        @current-change="changePage" 改变当前页
 
-                        :current-page="activePage"
-                        :page-size="activePageSize"
+                        :current-page="activePage"   当前页
+                        :page-size="activePageSize"  当前显示多少条
 
                         :page-sizes="[5,10,20,40]"
                         
@@ -127,6 +159,21 @@
                         :total="200">
                     </el-pagination>
                 </div>
+
+                <!-- 编辑框 -->
+                <el-dialog  title="提示"  :visible.sync="isShowEdit" width="30%">
+                    <span>当前索引：{{form.index}}</span>
+                    <el-form :model="form" >
+                        <el-form-item label="标题">
+                            <el-input v-model="form.title"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
+            <el-button @click="isShowEdit = false">取 消</el-button>
+            <el-button type="primary" @click="saveEdit">确 定</el-button>
+                    </span>
+              </el-dialog>
+
             </el-main>
         </el-container>
         </el-container>
@@ -164,10 +211,16 @@
                 //     name: '王小虎',
                 //     address: '上海市普陀区金沙江路 1516 弄'
                 //     }]
+
+                isShowEdit: false,
+                form:{
+                    index:0,
+                    title:'',
+                }
             }
         },
         mounted(){
-            this.getList();//初始化加载
+            this.getList(); //初始化加载
         },
         methods:{
             openMenu:function(t){ //自动获取第一个参数
@@ -187,27 +240,55 @@
                 }.bind(this));
             },
             
-            changeSize:function(page){      //改变当前显示条数
-                this.activePageSize = page;
+            changeSize:function(size){      //改变当前显示条数,page名字可变
+                this.activePageSize = size;
             },
-            changeCurrent:function(size){  //当前页码
-                this.activePage = size;
+            changePage:function(page){      //改变当前页码，size名字可变
+                this.activePage = page;
+            },
+
+            del:function(index){
+                this.$confirm( '是否删除文章' + this.tableData[index].title )
+                .then(function(){
+                        this.tableData.splice(index,1);
+                    }.bind(this))
+                .catch(function(){
+                    // 取消删除
+                });
             },
             
+
+            showEditPanel:function(index){
+                this.form.index = index;
+                this.form.title = this.tableData[index].title;
+                this.isShowEdit = true;
+            },
+            saveEdit: function(){
+                
+                this.tableData[this.form.index].title = this.form.title;
+                this.isShowEdit = false;
+
+                this.isLoading = true;
+                setTimeout(function(){
+                    this.isLoading = false;
+                    this.$message("修改成功！");
+                }.bind(this),1000)
+            },
+            
+            sortChange :function(){
+                // axio排序 改变tableData 实现按照中文排序
+            }
         },
         
         watch: {
-            activePage(){
+            activePage: function(){
                 this.getList();
             },
-            activePageSize(){
+            activePageSize: function(){
                 this.getList();
             }
         }
 
     });
-
-
 </script>
-
 </html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- 引入样式 -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<link rel="stylesheet" href="./cssVue/index.css" >
+<!-- 引入样式 -->
+<style>
+    [v-cloak]{
+        display: none;
+    }
+
+  
+  </style>
+</head>
+
+<body>
+    <div id="app">
+
+        <el-container v-cloak v-loading="isLoading">
+            <el-aside width="200px">
+
+                <i class="el-icon-edit"></i> 饿了么后台管理
+                    
+                <el-menu default-active="1" >
+                    <el-submenu index="1">
+
+                        <template slot="title">
+                            <i class="el-icon-location"></i>
+                            <span>文章管理</span>
+                        </template>
+
+                        <el-menu-item-group>
+                            <el-menu-item index="1-1" >分组一</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group>
+                            <el-menu-item index="1-2" >分组二</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group >
+                            <el-menu-item index="1-3">分组三</el-menu-item>
+                        </el-menu-item-group>
+
+                    </el-submenu>
+
+                    <el-menu-item index="2">
+                        <i class="el-icon-menu"></i>
+                        <span slot="title">人员管理</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="3">
+                        <i class="el-icon-setting"></i>
+                        <span slot="title">设置</span>
+                    </el-menu-item>
+
+                </el-menu>
+            </el-aside>
+            <el-main>
+                <el-form ref="form" :model="form" label-width="80px">
+                    <!-- input -->
+                    <el-form-item label="文章标题" prop="title" :rules="[{ required: true, message: '请输入活动名称', trigger: 'blur' },
+                    { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }]">
+                        <el-input v-model="form.title"></el-input>
+                    </el-form-item>
+
+                    <!-- select -->
+                    <el-form-item label="文章类型">
+                        <el-select v-model="form.category" placeholder="请选择文章类型">
+                            <el-option label="选项一" value="1"></el-option>
+                            <el-option label="选项二" value="2"></el-option>
+                        </el-select>
+                    </el-form-item>
+
+                    <!-- datepicker -->
+                    <el-form-item label="发布时间">
+                        <el-date-picker v-model="form.date1" placeholder="请选择日期">
+
+                        </el-date-picker>
+
+                        <el-time-picker v-model="form.date2" placeholder="请选择时间">
+                                
+                        </el-time-picker>
+                    </el-form-item>
+
+                    <!-- isFree -->
+                    <el-form-item label="是否免费">
+                        <el-switch v-model="form.isFree"></el-switch>
+                    </el-form-item>
+
+                    <!-- checkbox -->
+                    <el-form-item label="文章标签">
+                        <el-checkbox-group v-model="form.type">
+                            <el-checkbox label="美食" ></el-checkbox>
+                            <el-checkbox label="活动" ></el-checkbox>
+                            <el-checkbox label="娱乐" ></el-checkbox>
+                            <el-checkbox label="学习" ></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+
+                    <!-- radio -->
+                    <el-form-item label="来源">
+                        <el-radio-group v-model="form.resource">
+                          <el-radio label="原创" ></el-radio>
+                          <el-radio label="网络" ></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+
+                    <!-- textarea -->
+                    <el-form-item label="补充">
+                        <el-input type="textarea" v-model="form.desc" placeholder=""></el-input>
+                    </el-form-item>
+
+                    <!-- 确定 取消按钮 -->
+
+                    <el-form-item>
+                        <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                        <el-button>取消</el-button>
+                    </el-form-item>
+
+                </el-form>
+            </el-main>
+          
+        </el-container>
+        
+    </div>
+</body>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    new Vue({
+        el:"#app",
+        data:function() {
+            return {
+                isLoading:false,
+                form: {
+                    title: '',
+                    category: '',
+                    date1:'',
+                    date2:'',
+                    isFree:false,
+                    type:[],
+                    resource:'',
+                    desc:''
+                }
+            }
+        },
+        methods:{
+            onSubmit:function(){
+                this.isLoading = true;
+                setTimeout(function(){
+                    this.isLoading = false;
+                    this.$message('创建成功！');
+                }.bind(this),1000);
+            }
+
+            // onSubmit:function(){
+            //     this.isLoading = true;
+            //     axio.post('url',{
+            //         form:this.form
+            //     })
+            //     .then(function(res){
+
+            //         this.isLoading = false;
+            //         this.$message('创建成功！');
+                    
+            //         // console.log(res);                    
+            //     })
+            //     .catch(function(err){
+                    
+            //         // console.log(error);                    
+            //     });
+            // }
+        },
+
+
+    });
+
+
+</script>
+</html>
